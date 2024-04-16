@@ -9,17 +9,29 @@ html {
 }
 
 header {
-    background-color: #f5ba13;
-    margin: auto -16px;
-    padding: 16px 32px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+  background-color: #f5ba13;
+  padding: 16px 32px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+  display: flex; 
+  justify-content: space-between;
+  align-items: center; 
 }
 
 header h1 {
-    color: #fff;
-    font-family: "McLaren", cursive, sans-serif;
-    font-weight: 200;
-    padding-left: 15px;
+  color: #fff;
+  font-family: "McLaren", cursive, sans-serif;
+  font-weight: 200;
+  font-size: 24px; 
+}
+.logout-button {
+  color: bisque;
+  background-color: white !important;
+  font-family: "McLaren", cursive, sans-serif !important;
+  border: none;
+  cursor: pointer;
+  margin-right: 16px !important;
+  padding: 8px 16px !important; 
+  border-radius: 20px !important;
 }
 
 form.create-note {
@@ -109,5 +121,58 @@ footer p {
     font-weight: bold; 
     text-align: center;
     margin-top: 5px;
+}
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 600px; /* Increased max-width */
+    padding: 40px; /* Increased padding */
+    border: 1px solid #ccc;
+    border-radius: 10px; /* Increased border-radius */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Increased box-shadow */
+    background-color: #fff; /* Added background color */
   }
   
+  h2 {
+    margin-top: 0;
+    margin-bottom: 20px; 
+    font-size: 2em; 
+    text-align: center;
+  }
+  
+  .input-group {
+    margin-bottom: 20px;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 15px; 
+    font-size: 18px; 
+    border: 1px solid #ccc;
+    border-radius: 8px; 
+  }
+  
+  .button {
+    width: 100%;
+    padding: 15px; 
+    font-size: 18px; 
+    color: #fff;
+    background-color: #f5ba13;
+    border: none;
+    border-radius: 8px; 
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: #d39e00; 
+  }
+  .error-message {
+    color: red;
+    font-size: 14px;
+    /* margin-top: 5px; */
+    text-align: center;
+     /* margin-top: 5px; */
+    margin-bottom: 5px;
+  }
