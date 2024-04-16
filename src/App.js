@@ -19,10 +19,10 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -40,12 +40,16 @@ function App() {
 
   useEffect(() => {
     const fetchNotes = async () => {
-      if (user) {
-        const notesCollection = collection(db, "notes");
-        const q = query(notesCollection, where("email", "==", user.email));
-        const snapshot = await getDocs(q);
-        const notesData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        setNotes(notesData);
+      try {
+        if (user) {
+          const notesCollection = collection(db, "notes");
+          const q = query(notesCollection, where("email", "==", user.email));
+          const snapshot = await getDocs(q);
+          const notesData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          setNotes(notesData);
+        }
+      } catch (error) {
+        console.error("Error fetching notes: ", error);
       }
     };
     fetchNotes();
@@ -55,9 +59,9 @@ function App() {
     if (newNote.title.trim() !== "" && newNote.content.trim() !== "") {
       try {
         const notesCollection = collection(db, "notes");
-        const noteData = { ...newNote, email: user.email };
+        const noteData = { ...newNote, email: user.email }; 
         const docRef = await addDoc(notesCollection, noteData);
-        setNotes((prevNotes) => [...prevNotes, { ...noteData, id: docRef.id }]);
+        setNotes((prevNotes) => [...prevNotes, { ...newNote, id: docRef.id }]);
         setErrorMessage("");
       } catch (error) {
         console.error("Error adding document: ", error);
@@ -83,30 +87,39 @@ function App() {
       console.error("Error logging out: ", error);
     }
   };
-
+  const NotesSection = ({ onAdd, notes, errorMessage, deleteNote }) => {
+    return (
+      <div>
+        {/* Render the CreateArea component */}
+        <CreateArea onAdd={onAdd} />
+  
+        {/* Render the existing notes */}
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {notes.map((note) => (
+          <Note
+            key={note.id}
+            id={note.id}
+            title={note.title}
+            content={note.content}
+            onDelete={deleteNote}
+          />
+        ))}
+      </div>
+    );
+  };
   return (
     <Router>
       <div className="App">
         <Header onLogout={handleLogout} />
         <Routes>
+          {/* Route to render Sign component if user is not authenticated */}
           <Route
             path="/"
-            element={loading ? null : user ? <CreateArea onAdd={addNote} /> : <Sign setUser={setUser} setLoading={setLoading} />}
+            element={loading ? null : user ? <Navigate to="/notes" /> : <Sign setUser={setUser} setLoading={setLoading} />}
           />
-          <Route
-            path="/notes"
-            element={
-              user ? (
-                <>
-                  {errorMessage && <p className="error-message">{errorMessage}</p>}
-                  {notes.map((note, index) => (
-                    <Note key={note.id} id={note.id} title={note.title} content={note.content} onDelete={deleteNote} />
-                  ))}
-                  <Footer />
-                </>
-              ) : null
-            }
-          />
+
+          {/* Route to render both CreateArea and NotesSection components */}
+          <Route path="/notes" element={<NotesSection onAdd={addNote} notes={notes} errorMessage={errorMessage} deleteNote={deleteNote} />} />
         </Routes>
       </div>
     </Router>
@@ -114,4 +127,3 @@ function App() {
 }
 
 export default App;
-
